@@ -1,26 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-// const multer = require("multer");
 const jwt = require("jsonwebtoken");
 
 let refreshTokens = [];
 
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "static/uploads");
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.originalname);
-//   },
-// });
-
-// const multipart = multer({ storage: storage });
-
 router.post("/signup", async (req, res) => {
   console.log(req.body);
-  // console.log(userController);
-  // req.body.photoUrl = req.file.path;
   let result = await userController.addUser(req.body);
   console.log(result);
   if (result.status) {
@@ -36,10 +22,8 @@ router.post("/signup", async (req, res) => {
     });
     console.log("refresh token is: ", refreshToken);
     refreshTokens.push(refreshToken);
-    // res.status(201).send(result.user);
     res.status(201).json({ access_token: token, refresh_token: refreshToken });
   } else {
-    // res.status(401).send(result.err)
     res.status(400).json(result.result);
   }
 });

@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 
 //routes
 const authRouter = require('./routes/authRouter');
+const addressRouter = require('./routes/addressRouter');
 
 //controllers
 const userController = require('./controllers/userController');
@@ -16,6 +17,7 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
+
 
 mongoose.connect('mongodb://127.0.0.1:27017/addresses', { useNewUrlParser: true, useUnifiedTopology: true , useCreateIndex: true})
     .then(()=> console.log("connected to mongo db"))
@@ -49,6 +51,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/addresses', { useNewUrlParser: true,
     
     // app.use('/books', validateRequest, bookRouter);
     app.use('/auth', authRouter);
+    app.use('/address', addressRouter);
     
     app.all(/.*/, (req, res) => {
         res.statusCode = 404;
