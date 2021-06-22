@@ -19,26 +19,8 @@ const getAllAddresses = async ({ email }) => {
       result = { status: false, response: err };
     });
   return result;
-
-  // console.log(greenColor + "=============================" + resetColor);
-  // books.forEach((book) =>
-  //   console.error(
-  //     greenColor +
-  //       "Title: " +
-  //       book.title +
-  //       "\nCategory: " +
-  //       book.category.name +
-  //       "\nAuthors: " +
-  //       book.author.join(", ") +
-  //       "\nPrice: " +
-  //       book.price +
-  //     "\n=============================" +
-  //     resetColor
-  //   )
-  // );
 };
 
-//city, pincode, state, country, addressLine1, addressLine2, label
 const addAddress = async ({
   email,
   city,
@@ -104,31 +86,33 @@ const searchAddress = async ({ searchTerm, email }) => {
     return result;
   }
   let re = new RegExp(searchTerm, "i");
-  await UserModel.find({ email }).populate('addresses').then((userResult) => {
-    if (userResult.length > 0) {
-      let subResult = [];
-      for (let item of userResult[0].addresses) {
-        console.log('item is:', item);
-        if (
-          item["city"].includes(searchTerm) ||
-          item["pincode"].includes(searchTerm) ||
-          item["state"].includes(searchTerm)
-        ) {
-          subResult.push(item);
+  await UserModel.find({ email })
+    .populate("addresses")
+    .then((userResult) => {
+      if (userResult.length > 0) {
+        let subResult = [];
+        for (let item of userResult[0].addresses) {
+          console.log("item is:", item);
+          if (
+            item["city"].includes(searchTerm) ||
+            item["pincode"].includes(searchTerm) ||
+            item["state"].includes(searchTerm)
+          ) {
+            subResult.push(item);
+          }
         }
-      }
-      if (subResult.length > 0) {
-        result.status = true;
-        result.response = subResult;
+        if (subResult.length > 0) {
+          result.status = true;
+          result.response = subResult;
+        } else {
+          result.status = false;
+          result.response = "No matching results found";
+        }
       } else {
         result.status = false;
-        result.response = "No matching results found";
+        result.response = "User doesn't exist";
       }
-    } else {
-      result.status = false;
-      result.response = "User doesn't exist";
-    }
-  });
+    });
   return result;
 };
 
@@ -171,10 +155,25 @@ const removeAddressByID = async (addressID) => {
   }
   return result;
 };
+
+const updateAddress = async ({addressID, dataToUpdate}) => {
+  let result = {};
+  await AddressModel.findByIdAndUpdate(addressID, dataToUpdate, {new: true}).then((data) => {
+    console.log(data);
+    result["status"] = true;
+    result["response"] = data;
+  }).catch((err) => {
+    console.log(err);
+    result["status"] = false;
+    result["response"] = err;
+  })
+  return result;
+}
 module.exports = {
   //   printAllBooks,
   addAddress,
   getAllAddresses,
   removeAddressByID,
   searchAddress,
+  updateAddress,
 };
