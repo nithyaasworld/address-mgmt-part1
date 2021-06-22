@@ -59,15 +59,17 @@ router.delete('/:addressID', async (req, res) => {
     }
 })})
 
-// router.get('/:searchTerm', async (req, res) => {
-//     let payload = {email: req.email, searchTerm: req.params.searchTerm};
-//     await addressController.searchAddress(payload).then((data)=>{
-//       if(data.status){
-//           res.status(201).send(data.response);
-//       }else{
-//           res.status(204).send(data.response);
-//       }
-//   })})
+router.post('/:searchTerm', async (req, res) => {
+    let payload = {email: req.body.email, searchTerm: req.params.searchTerm};
+    console.log(payload);
+    await addressController.searchAddress(payload).then((data)=>{
+        console.log(data);
+      if(data.status){
+          res.status(201).send(data.response);
+      }else{
+          res.status(204).send(data.response);
+      }
+  })})
 
 // router.get("/:bookID", [bookHandler1, booksHandler2]);
 module.exports = router;
