@@ -1,8 +1,5 @@
 const AddressModel = require("../models/address");
 const UserModel = require("../models/user");
-const addressController = require("./addressController");
-const greenColor = "\x1b[32m";
-const resetColor = "\x1b[0m";
 
 const getAllAddresses = async ({ email }) => {
   console.log("email is: ", email);
@@ -170,7 +167,6 @@ const updateAddress = async ({addressID, dataToUpdate}) => {
   return result;
 }
 module.exports = {
-  //   printAllBooks,
   addAddress,
   getAllAddresses,
   removeAddressByID,

@@ -1,9 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const addressController = require("../controllers/addressController");
+const jwt = require("jsonwebtoken");
+
+let email; 
+
+router.use(function (req,res,next){
+    let authHeader = req.headers['authorization'];
+    let data = jwt.verify(authHeader.split(' ')[1], process.env.ACCESS_TOKEN_SECRET);
+    email = data["email"];
+    console.log(email);
+    next();
+})
 
 router.route("/").get(async (req, res) => {
-  await addressController.getAllAddresses(req.body).then((result) => {
+  await addressController.getAllAddresses({email}).then((result) => {
     console.log("result at line 10: ", result);
     if (result.status) {
       res.status(200).json(result.response);
@@ -37,7 +48,7 @@ router.route("/").get(async (req, res) => {
 // })
 router.post("/add-new", async (req, res) => {
   console.log("request is: ", req.body);
-
+    req.body["email"] = email;
   await addressController.addAddress(req.body).then((data) => {
     console.log("data on line 39: ", data);
     if (data.status) {
@@ -61,7 +72,8 @@ router.delete("/:addressID", async (req, res) => {
 });
 
 router.post("/:searchTerm", async (req, res) => {
-  let payload = { email: req.body.email, searchTerm: req.params.searchTerm };
+    console.log("reached line 73");
+  let payload = { email, searchTerm: req.params.searchTerm };
   console.log(payload);
   await addressController.searchAddress(payload).then((data) => {
     console.log(data);
